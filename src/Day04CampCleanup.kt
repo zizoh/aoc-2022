@@ -5,56 +5,54 @@ fun main() {
 }
 
 private fun getCompleteOverlap(input: List<String>) = input.sumOf {
-    val (firstAssignment: List<Int>, secondAssignment: List<Int>) = getReorderedList(it)
-    val overlapCount = if (isCompleteOverlap(firstAssignment, secondAssignment)) {
-        1
-    } else 0
+    val reorderedList: List<Int> = getReorderedList(it)
+    val overlapCount = if (isCompleteOverlap(reorderedList)) 1 else 0
     overlapCount
 }
 
 private fun getPartialOverlap(input: List<String>) = input.sumOf {
-    val (firstAssignment: List<Int>, secondAssignment: List<Int>) = getReorderedList(it)
-    val overlapCount = if (isOverlap(firstAssignment, secondAssignment)) {
-        1
-    } else 0
+    val reorderedList: List<Int> = getReorderedList(it)
+    val overlapCount = if (isOverlap(reorderedList)) 1 else 0
     overlapCount
 }
 
-private fun getReorderedList(it: String): Pair<List<Int>, List<Int>> {
-    val sections = it.split(",")
-    val firstAssignment: List<Int>
-    val secondAssignment: List<Int>
-    val first = sections.first().split("-")
-    val last: List<String> = sections.last().split("-")
-    val index0 = first.first().toInt()
-    val index1 = first.last().toInt()
-    val index2 = last.first().toInt()
-    val index3 = last.last().toInt()
-    if (index0 < index2) {
-        firstAssignment = listOf(index0, index1)
-        secondAssignment = listOf(index2, index3)
-    } else if (index0 == index2) {
-        if (index1 <= index3) {
-            firstAssignment = listOf(index2, index3)
-            secondAssignment = listOf(index0, index1)
-        } else {
-            firstAssignment = listOf(index0, index1)
-            secondAssignment = listOf(index2, index3)
-        }
-    } else {
-        firstAssignment = listOf(index2, index3)
-        secondAssignment = listOf(index0, index1)
+private fun getReorderedList(it: String): List<Int> {
+    val sections = it.split("-", ",").map { it.toInt() }.toMutableList()
+    val startOfFirstPair = sections[0]
+    val endOfFirstPair = sections[1]
+    val startOfSecondPair = sections[2]
+    val endOfSecondPair = sections[3]
+    if (isStartOfFirstSectionSameAsStartOfSecondSection(startOfFirstPair, startOfSecondPair)
+        && isEndOfFirstSectionOverlappingStartOfSecondSection(endOfFirstPair, endOfSecondPair)
+        || isFirstSectionAfterSecondSection(startOfFirstPair, startOfSecondPair)
+    ) {
+        sections[0] = startOfSecondPair
+        sections[1] = endOfSecondPair
+        sections[2] = startOfFirstPair
+        sections[3] = endOfFirstPair
     }
-    return Pair(firstAssignment, secondAssignment)
+    return sections
 }
 
-fun isCompleteOverlap(
-    firstAssignment: List<Int>,
-    secondAssignment: List<Int>
-) = secondAssignment.first() <= firstAssignment.last()
-        && secondAssignment.last() <= firstAssignment.last()
+private fun isFirstSectionAfterSecondSection(
+    startOfFirstPair: Int,
+    startOfSecondPair: Int
+) = startOfFirstPair > startOfSecondPair
 
-fun isOverlap(
-    firstAssignment: List<Int>,
-    secondAssignment: List<Int>
-) = isCompleteOverlap(firstAssignment, secondAssignment) || secondAssignment.first() <= firstAssignment.last()
+private fun isStartOfFirstSectionSameAsStartOfSecondSection(
+    startOfFirstPair: Int,
+    startOfSecondPair: Int
+) = startOfFirstPair == startOfSecondPair
+
+fun isCompleteOverlap(sections: List<Int>) =
+    isEndOfFirstSectionOverlappingStartOfSecondSection(
+        sections[2], sections[1]
+    ) && isEndOfFirstSectionOverlappingStartOfSecondSection(sections[3], sections[1])
+
+fun isOverlap(sections: List<Int>) = isCompleteOverlap(sections) ||
+        isEndOfFirstSectionOverlappingStartOfSecondSection(sections[2], sections[1])
+
+private fun isEndOfFirstSectionOverlappingStartOfSecondSection(
+    endOfFirstPair: Int,
+    endOfSecondPair: Int
+) = endOfFirstPair <= endOfSecondPair
