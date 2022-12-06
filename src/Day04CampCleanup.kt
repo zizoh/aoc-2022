@@ -1,22 +1,5 @@
 fun main() {
     val input: List<String> = readInput("input/day04")
-    // less
-    // more
-    // equal
-    val meh = listOf(
-        "2-4,6-8",
-        "2-3,4-5",
-        "5-7,7-9",
-        "2-8,3-7",
-        "6-6,4-6",
-        "2-6,4-8",
-    )
-    val overlap = listOf(
-        "5-7,7-9",
-        "2-8,3-7",
-        "6-6,4-6",
-        "2-6,4-8"
-    )
     println("total complete overlap: ${getCompleteOverlap(input)}")
     println("total partial overlap: ${getPartialOverlap(input)}")
 }
