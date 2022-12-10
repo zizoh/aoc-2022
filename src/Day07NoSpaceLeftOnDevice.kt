@@ -18,7 +18,7 @@ fun getSumOfTotalSizes(input: List<String>): Int {
             directories.removeLast()
         } else if (commandOrOutput.isDirectoryOutput()) {
             val directoryName = commandOrOutput.getDirectoryName()
-            val directory = Node(directoryName, value = "")
+            val directory = Node(directoryName, size = "0")
             nodes.add(directory)
             currentDirectory.children[directoryName] = directory
         } else if (commandOrOutput.isFileOutput()) {
@@ -42,6 +42,6 @@ fun String.getFileName() = this.split(" ")[1]
 
 data class Node(
     val name: String,
-    val value: String,
+    val size: String,
     var children: MutableMap<String, Node> = mutableMapOf()
 )
