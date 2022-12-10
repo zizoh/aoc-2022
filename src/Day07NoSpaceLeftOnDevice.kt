@@ -4,7 +4,7 @@ fun main() {
 }
 
 fun getSumOfTotalSizes(input: List<String>): Int {
-    val root = Node("parent", "")
+    val root = Node("root", "0")
     val nodes = mutableListOf<Node>()
     val directories = mutableListOf(root)
     for (index in 1..input.lastIndex) {
@@ -12,15 +12,14 @@ fun getSumOfTotalSizes(input: List<String>): Int {
         val currentDirectory = directories.last()
         if (commandOrOutput.isMoveInCommand()) {
             val directoryName = commandOrOutput.getDirectoryName()
-            val tempCurrentDirectory = currentDirectory.children[directoryName]!!
+            val tempCurrentDirectory = currentDirectory.children["$DIR $directoryName"]!!
             directories.add(tempCurrentDirectory)
         } else if (commandOrOutput.isMoveOutCommand()) {
             directories.removeLast()
         } else if (commandOrOutput.isDirectoryOutput()) {
-            val directoryName = commandOrOutput.getDirectoryName()
-            val directory = Node(directoryName, size = "0")
+            val directory = Node(commandOrOutput, size = "0")
             nodes.add(directory)
-            currentDirectory.children[directoryName] = directory
+            currentDirectory.children[commandOrOutput] = directory
         } else if (commandOrOutput.isFileOutput()) {
             val fileName = commandOrOutput.getFileName()
             val file = Node(fileName, commandOrOutput.getFileSize())
@@ -31,8 +30,8 @@ fun getSumOfTotalSizes(input: List<String>): Int {
     return 0
 }
 
-private const val directoryName = "dir"
-private fun String.isDirectoryOutput() = this.split(" ").first() == directoryName
+private const val DIR = "dir"
+private fun String.isDirectoryOutput() = this.split(" ").first() == DIR
 private fun String.isFileOutput() = this.first().isDigit()
 private fun String.isMoveOutCommand() = this == "\$ cd .."
 private fun String.isMoveInCommand() = this.contains("\$ cd") && !this.contains("..")
