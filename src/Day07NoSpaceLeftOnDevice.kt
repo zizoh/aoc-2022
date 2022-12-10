@@ -1,11 +1,26 @@
 fun main() {
     val input: List<String> = readInput("input/day07")
-    println("sum of total sizes: ${getSumOfTotalSizes(input)}")
+    calculateSumOfDirectories(getRootNode(input))
+    println("total: $sumOfDirectoriesEqualOrLessThan100000")
 }
 
-fun getSumOfTotalSizes(input: List<String>): Int {
+private var sumOfDirectoriesEqualOrLessThan100000 = 0
+
+fun calculateSumOfDirectories(node: Node): Int {
+    val sumOf = node.children.values.map {
+        if (it.name.isDirectoryOutput()) {
+            calculateSumOfDirectories(it)
+        } else it.size.toInt()
+    }
+    val sumOfDirectory = sumOf.sum()
+    if (sumOfDirectory <= 100000) {
+        sumOfDirectoriesEqualOrLessThan100000 += sumOfDirectory
+    }
+    return sumOfDirectory
+}
+
+fun getRootNode(input: List<String>): Node {
     val root = Node("root", "0")
-    val nodes = mutableListOf<Node>()
     val directories = mutableListOf(root)
     for (index in 1..input.lastIndex) {
         val commandOrOutput = input[index]
@@ -18,16 +33,14 @@ fun getSumOfTotalSizes(input: List<String>): Int {
             directories.removeLast()
         } else if (commandOrOutput.isDirectoryOutput()) {
             val directory = Node(commandOrOutput, size = "0")
-            nodes.add(directory)
             currentDirectory.children[commandOrOutput] = directory
         } else if (commandOrOutput.isFileOutput()) {
             val fileName = commandOrOutput.getFileName()
             val file = Node(fileName, commandOrOutput.getFileSize())
-            nodes.add(file)
             currentDirectory.children[fileName] = file
         }
     }
-    return 0
+    return root
 }
 
 private const val DIR = "dir"
