@@ -1,10 +1,17 @@
 fun main() {
     val input: List<String> = readInput("input/day07")
-    calculateSumOfDirectories(getRootNode(input))
-    println("total: $sumOfDirectoriesEqualOrLessThan100000")
+    val totalSizeOnDisk = calculateSumOfDirectories(getRootNode(input))
+    val totalDiskSpace = 70_000_000
+    val minimumSpaceRequired = 30_000_000
+    println(
+        sizesOfDirectories.filter { size ->
+            size >= minimumSpaceRequired + totalSizeOnDisk - totalDiskSpace
+        }.min()
+    )
 }
 
-private var sumOfDirectoriesEqualOrLessThan100000 = 0
+private var sizesOfDirectories = mutableListOf<Int>()
+private var totalSizeOnDisk = 0
 
 fun calculateSumOfDirectories(node: Node): Int {
     val sumOf = node.children.values.map {
@@ -13,9 +20,8 @@ fun calculateSumOfDirectories(node: Node): Int {
         } else it.size.toInt()
     }
     val sumOfDirectory = sumOf.sum()
-    if (sumOfDirectory <= 100000) {
-        sumOfDirectoriesEqualOrLessThan100000 += sumOfDirectory
-    }
+    totalSizeOnDisk += sumOfDirectory
+    sizesOfDirectories += sumOfDirectory
     return sumOfDirectory
 }
 
