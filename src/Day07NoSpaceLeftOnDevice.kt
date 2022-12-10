@@ -31,7 +31,8 @@ fun getSumOfTotalSizes(input: List<String>): Int {
     return 0
 }
 
-private fun String.isDirectoryOutput() = this.contains("dir")
+private const val directoryName = "dir"
+private fun String.isDirectoryOutput() = this.split(" ").first() == directoryName
 private fun String.isFileOutput() = this.first().isDigit()
 private fun String.isMoveOutCommand() = this == "\$ cd .."
 private fun String.isMoveInCommand() = this.contains("\$ cd") && !this.contains("..")
